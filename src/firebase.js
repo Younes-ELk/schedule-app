@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, browserLocalPersistence, setPersistence } from "firebase/auth";
+import { getAuth, browserLocalPersistence, setPersistence,GoogleAuthProvider  } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore"; // Add these imports
 
 // Your Firebase configuration
@@ -15,6 +15,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
 // Set local persistence to keep user logged in after page refresh
@@ -27,4 +28,4 @@ setPersistence(auth, browserLocalPersistence)
   });
 
 // Export Firestore methods and db
-export { auth, db, collection, addDoc, getDocs };
+export { auth,googleProvider, db, collection, addDoc, getDocs };

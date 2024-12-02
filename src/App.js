@@ -8,6 +8,7 @@ import ScheduleList from "./components/ScheduleList";
 import AddSchedule from "./components/AddSchedule";
 import CalendarView from "./components/CalendarView";
 import Sidebar from "./components/Sidebar";
+import WelcomePage from "./components/WelcomePage";  // Import the new WelcomePage
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -34,6 +35,10 @@ const App = () => {
         {isAuthenticated && <Sidebar />}
         <div className="flex-1 bg-gray-50">
           <Routes>
+            {/* Welcome Page - If not authenticated */}
+            <Route path="/" element={!isAuthenticated ? <WelcomePage /> : <Navigate to="/schedules" />} />
+
+            {/* Login & Signup Routes */}
             <Route
               path="/login"
               element={!isAuthenticated ? <Login /> : <Navigate to="/schedules" />}
@@ -42,6 +47,8 @@ const App = () => {
               path="/signup"
               element={!isAuthenticated ? <Signup /> : <Navigate to="/schedules" />}
             />
+
+            {/* Protected Routes - If authenticated */}
             {isAuthenticated && (
               <>
                 <Route path="/schedules" element={<ScheduleList />} />
@@ -50,10 +57,14 @@ const App = () => {
                 <Route path="*" element={<Navigate to="/schedules" />} />
               </>
             )}
+
+            {/* Redirect unauthenticated users to login page */}
             {!isAuthenticated && <Route path="*" element={<Navigate to="/login" />} />}
           </Routes>
         </div>
       </Router>
+
+      {/* Toast Notifications */}
       <ToastContainer
         position="top-center"
         autoClose={3000}
