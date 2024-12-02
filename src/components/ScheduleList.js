@@ -251,7 +251,7 @@ const ScheduleList = () => {
               />
             </div>
             <div>
-              <label className="block text-sm">Tags</label>
+            <label className="block text-sm">Tags</label>
               <input
                 type="text"
                 value={filterTags}

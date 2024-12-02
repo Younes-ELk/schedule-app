@@ -245,53 +245,52 @@ const AddSchedule = () => {
         >
           Save
         </button>
-        </div>
-
-{/* All Schedules Table */}
-<div className="bg-white shadow-md rounded p-6">
-  <h2 className="text-lg font-bold mb-4">All Schedules</h2>
-  <table className="w-full border-collapse">
-    <thead>
-      <tr className="bg-gray-200">
-        <th className="border px-4 py-2">Title</th>
-        <th className="border px-4 py-2">Start Date & Time</th>
-        <th className="border px-4 py-2">End Date & Time</th>
-        <th className="border px-4 py-2">Duration</th>
-        <th className="border px-4 py-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {schedules.map((schedule) => (
-        <tr key={schedule.id}>
-          <td className="border px-4 py-2">{schedule.title}</td>
-          <td className="border px-4 py-2">
-            {schedule.startDate} {schedule.startTime}
-          </td>
-          <td className="border px-4 py-2">
-            {schedule.endDate} {schedule.endTime}
-          </td>
-          <td className="border px-4 py-2">{schedule.duration}</td>
-          <td className="border px-4 py-2">
-            <button
-              onClick={() => startEditing(schedule)}
-              className="bg-yellow-500 text-white px-4 py-2 rounded"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(schedule.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded ml-2"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-</div>
-);
+      </div>
+      {/* All Schedules Table */}
+      <div className="bg-white shadow-md rounded p-6">
+        <h2 className="text-lg font-bold mb-4">All Schedules</h2>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border px-4 py-2">Title</th>
+              <th className="border px-4 py-2">Start Date & Time</th>
+              <th className="border px-4 py-2">End Date & Time</th>
+              <th className="border px-4 py-2">Duration</th>
+              <th className="border px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {schedules.map((schedule) => (
+              <tr key={schedule.id}>
+                <td className="border px-4 py-2">{schedule.title}</td>
+                <td className="border px-4 py-2">
+                  {schedule.startDate} {schedule.startTime}
+                </td>
+                <td className="border px-4 py-2">
+                  {schedule.endDate} {schedule.endTime}
+                </td>
+                <td className="border px-4 py-2">{schedule.duration}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    onClick={() => startEditing(schedule)}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(schedule.id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded ml-2"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 };
 
 export default AddSchedule;

@@ -4,6 +4,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
 import { db } from "../firebase"; // Import Firebase methods
 import { collection, query, where, onSnapshot } from "firebase/firestore"; // Import missing methods
+import { auth } from "../firebase"; // Import auth to get the current user ID
 
 const localizer = momentLocalizer(moment);
 
@@ -12,7 +13,15 @@ const CalendarView = () => {
 
   // Fetch events from Firestore
   useEffect(() => {
-    const q = query(collection(db, "schedules"));
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      console.error("User not logged in");
+      return;
+    }
+
+    // Query Firestore to fetch schedules for the current user
+    const q = query(collection(db, "schedules"), where("userId", "==", userId));  // Added userId filter
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const scheduleList = querySnapshot.docs.map((doc) => {
         const data = doc.data();
@@ -29,7 +38,7 @@ const CalendarView = () => {
     });
 
     return () => unsubscribe(); // Cleanup the listener
-  }, []);
+  }, []); // Dependency array is empty to only run this effect once after the component mounts
 
   return (
     <div className="p-6">
