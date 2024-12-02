@@ -1,175 +1,62 @@
-/* General styles for both pages */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: Arial, sans-serif;
-}
-
-/* Main wrapper */
 .App {
-  display: flex;
-  justify-content: space-between;
-  height: 100vh;
+  text-align: center;
 }
 
-/* Left side content (for both login/signup) */
-.left-section {
-  width: 50%;
-  background: linear-gradient(to bottom right, #4c6ef5, #7399f5);
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
   color: white;
 }
 
-.left-section h1 {
-  font-size: 2rem;
-  font-weight: bold;
+.App-link {
+  color: #61dafb;
 }
 
-.left-section p {
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
-.left-section a {
-  color: #aad4ff;
-  text-decoration: none;
-}
-
-.left-section a:hover {
-  text-decoration: underline;
-}
-
-/* Right side content (login/signup form) */
-.right-section {
-  width: 50%;
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-/* Form container */
-.form-container {
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
   width: 100%;
-  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
-.form-container h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* Input fields */
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-/* For the login page buttons */
-.login-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #db4437;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.login-btn:hover {
-  background-color: #c1351d;
-}
-
-/* Account switch link */
-.signup-link {
-  text-align: center;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-.signup-link a {
-  color: #4caf50;
-  text-decoration: none;
-}
-
-.signup-link a:hover {
-  text-decoration: underline;
-}
-
-/* Flipping animation (for the login/signup switch) */
-.flip-container {
-  perspective: 1000px;
-}
-
-.flip-card {
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-}
-
-.flip-card.flipped {
-  transform: rotateY(180deg);
-}
-
-.flip-card .card {
-  position: absolute;
-  backface-visibility: hidden;
-  width: 100%;
-  height: 100%;
-}
-
-.flip-card .card-front {
-  background-color: #fff;
-  padding: 20px;
-}
-
-.flip-card .card-back {
-  background-color: #fff;
-  padding: 20px;
-  transform: rotateY(180deg);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .App {
-    flex-direction: column;
-  }
-
-  .left-section,
-  .right-section {
-    width: 100%;
-  }
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
 }

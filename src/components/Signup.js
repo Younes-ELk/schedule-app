@@ -1,31 +1,46 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import '../styles.css'; // Ensure this CSS is included
+import { doc, setDoc } from "firebase/firestore";  // Import Firestore methods
 
 const Signup = () => {
-  const [name, setName] = useState(""); // Added name field
+  const [name, setName] = useState("");  // Added name field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = () => {
-    if (!name) {
-      toast.error("Name is required!");
+  const handleSignup = async (event) => {
+    event.preventDefault();
+    console.log("Signup Button Clicked");
+    
+    if (!name || !email || !password) {
+      toast.error("Please fill all the fields.");
       return;
     }
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        toast.success("Signup successful! Please log in.");
-        navigate("/login");
-      })
-      .catch((error) => {
-        console.error("Error signing up:", error.message);
-        toast.error(error.message);
+  
+    try {
+      // Log the inputs to check if they're being captured
+      console.log({ name, email, password });
+      
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        uid: user.uid,
       });
+  
+      toast.success("Signup successful! Please log in.");
+      navigate("/login");  // Redirect to login after successful signup
+    } catch (error) {
+      console.error("Error signing up:", error.message);
+      toast.error("Error: " + error.message);
+    }
   };
+  
 
   return (
     <div className="flex min-h-screen">

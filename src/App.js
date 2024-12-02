@@ -8,7 +8,6 @@ import ScheduleList from "./components/ScheduleList";
 import AddSchedule from "./components/AddSchedule";
 import CalendarView from "./components/CalendarView";
 import Sidebar from "./components/Sidebar";
-import WelcomePage from "./components/WelcomePage";  // Import the new WelcomePage
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -35,9 +34,6 @@ const App = () => {
         {isAuthenticated && <Sidebar />}
         <div className="flex-1 bg-gray-50">
           <Routes>
-            {/* Welcome Page - If not authenticated */}
-            <Route path="/" element={!isAuthenticated ? <WelcomePage /> : <Navigate to="/schedules" />} />
-
             {/* Login & Signup Routes */}
             <Route
               path="/login"
