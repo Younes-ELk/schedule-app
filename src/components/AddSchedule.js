@@ -1,16 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  doc
-} from "firebase/firestore";
-import { auth } from "../firebase";
+import React, { useEffect, useState } from "react"; 
+import { db } from "../firebase"; 
+import { collection, query, where, onSnapshot, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore"; 
+import { auth } from "../firebase"; 
 import { toast } from "react-toastify";
 
 const AddSchedule = () => {
@@ -27,6 +18,7 @@ const AddSchedule = () => {
   const [customTags, setCustomTags] = useState(["Personal", "Work"]);
   const [newTag, setNewTag] = useState(""); // For adding a new tag
   const [editing, setEditing] = useState(null);
+  const [duration, setDuration] = useState("N/A");
 
   // Fetch schedules from Firestore
   useEffect(() => {
@@ -48,6 +40,21 @@ const AddSchedule = () => {
     return () => unsubscribe();
   }, []);
 
+  // Calculate Duration
+  const calculateDuration = (startDate, startTime, endDate, endTime) => {
+    const startDateTime = new Date(`${startDate}T${startTime}`);
+    const endDateTime = new Date(`${endDate}T${endTime}`);
+    
+    const durationMillis = endDateTime - startDateTime;
+    if (durationMillis > 0) {
+      const hours = Math.floor(durationMillis / (1000 * 60 * 60));
+      const minutes = Math.floor((durationMillis % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m`;
+    }
+    return "N/A";
+  };
+
+  // Handle the add tag functionality
   const handleAddTag = () => {
     if (newTag.trim() && !customTags.includes(newTag.trim())) {
       setCustomTags([...customTags, newTag.trim()]);
@@ -58,6 +65,7 @@ const AddSchedule = () => {
     }
   };
 
+  // Handle adding a new schedule
   const handleAdd = async () => {
     if (
       !newSchedule.title ||
@@ -70,6 +78,10 @@ const AddSchedule = () => {
       return;
     }
 
+    // Calculate Duration
+    const calculatedDuration = calculateDuration(newSchedule.startDate, newSchedule.startTime, newSchedule.endDate, newSchedule.endTime);
+    setDuration(calculatedDuration);
+
     const userId = auth.currentUser?.uid;
     if (!userId) {
       toast.error("User not logged in!");
@@ -80,6 +92,7 @@ const AddSchedule = () => {
       await addDoc(collection(db, "schedules"), {
         ...newSchedule,
         userId,
+        duration: calculatedDuration, // Save duration
       });
       toast.success("Schedule added successfully!");
       setNewSchedule({
@@ -97,6 +110,7 @@ const AddSchedule = () => {
     }
   };
 
+  // Handle deleting a schedule
   const handleDelete = async (id) => {
     const confirm = window.confirm("Are you sure you want to delete this schedule?");
     if (!confirm) return;
@@ -145,9 +159,7 @@ const AddSchedule = () => {
               type="text"
               placeholder="Enter event title"
               value={newSchedule.title}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, title: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, title: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -156,9 +168,7 @@ const AddSchedule = () => {
             <input
               type="date"
               value={newSchedule.startDate}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, startDate: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, startDate: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -167,9 +177,7 @@ const AddSchedule = () => {
             <input
               type="time"
               value={newSchedule.startTime}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, startTime: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, startTime: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -178,9 +186,7 @@ const AddSchedule = () => {
             <input
               type="date"
               value={newSchedule.endDate}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, endDate: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, endDate: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -189,9 +195,7 @@ const AddSchedule = () => {
             <input
               type="time"
               value={newSchedule.endTime}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, endTime: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, endTime: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -200,9 +204,7 @@ const AddSchedule = () => {
             <div className="grid grid-cols-3 gap-4 items-center">
               <select
                 value={newSchedule.tags}
-                onChange={(e) =>
-                  setNewSchedule({ ...newSchedule, tags: e.target.value })
-                }
+                onChange={(e) => setNewSchedule({ ...newSchedule, tags: e.target.value })}
                 className="border px-3 py-2 rounded"
               >
                 <option value="">Select Tag</option>
@@ -232,9 +234,7 @@ const AddSchedule = () => {
             <textarea
               placeholder="Add a description (optional)"
               value={newSchedule.description}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, description: e.target.value })
-              }
+              onChange={(e) => setNewSchedule({ ...newSchedule, description: e.target.value })}
               className="border px-3 py-2 rounded w-full"
             />
           </div>
@@ -245,52 +245,53 @@ const AddSchedule = () => {
         >
           Save
         </button>
-      </div>
+        </div>
 
-      {/* All Schedules Table */}
-      <div className="bg-white shadow-md rounded p-6">
-        <h2 className="text-lg font-bold mb-4">All Schedules</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Title</th>
-              <th className="border px-4 py-2">Start Date & Time</th>
-              <th className="border px-4 py-2">End Date & Time</th>
-              <th className="border px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schedules.map((schedule) => (
-              <tr key={schedule.id}>
-                <td className="border px-4 py-2">{schedule.title}</td>
-                <td className="border px-4 py-2">
-                {schedule.startDate} {schedule.startTime}
-                </td>
-                <td className="border px-4 py-2">
-                  {schedule.endDate} {schedule.endTime}
-                </td>
-                <td className="border px-4 py-2">
-                  <button
-                    onClick={() => startEditing(schedule)}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(schedule.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded ml-2"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+{/* All Schedules Table */}
+<div className="bg-white shadow-md rounded p-6">
+  <h2 className="text-lg font-bold mb-4">All Schedules</h2>
+  <table className="w-full border-collapse">
+    <thead>
+      <tr className="bg-gray-200">
+        <th className="border px-4 py-2">Title</th>
+        <th className="border px-4 py-2">Start Date & Time</th>
+        <th className="border px-4 py-2">End Date & Time</th>
+        <th className="border px-4 py-2">Duration</th>
+        <th className="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {schedules.map((schedule) => (
+        <tr key={schedule.id}>
+          <td className="border px-4 py-2">{schedule.title}</td>
+          <td className="border px-4 py-2">
+            {schedule.startDate} {schedule.startTime}
+          </td>
+          <td className="border px-4 py-2">
+            {schedule.endDate} {schedule.endTime}
+          </td>
+          <td className="border px-4 py-2">{schedule.duration}</td>
+          <td className="border px-4 py-2">
+            <button
+              onClick={() => startEditing(schedule)}
+              className="bg-yellow-500 text-white px-4 py-2 rounded"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(schedule.id)}
+              className="bg-red-500 text-white px-4 py-2 rounded ml-2"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+</div>
+);
 };
 
 export default AddSchedule;
-
